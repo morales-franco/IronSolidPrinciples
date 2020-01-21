@@ -27,25 +27,23 @@ namespace Iron.Solid.SRP.Refactor
 
         public void ProcessCountries()
         {
-            //Read data from file
-            List<string> countryFileLines = new List<string>();
+            List<string> countryFileLines = ReadCountryData();
+            List<Country> countries = ParseCountries(countryFileLines);
+            InsertCountries(countries);
+        }
 
-            using (StreamReader reader = new StreamReader(countryFilePath))
+        private void InsertCountries(List<Country> countries)
+        {
+            //Insert countries in BD
+            using (var context = new ApplicationDbContext())
             {
-                try
-                {
-                    string line;
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        countryFileLines.Add(line);
-                    }
-                }
-                catch (FileNotFoundException ex)
-                {
-                    Console.WriteLine($"ERROR: File { countryFilePath } Not Found - { ex.Message }");
-                }
-            }
+                countries.ForEach(country => context.Add(country));
+                context.SaveChanges();
+            };
+        }
 
+        private List<Country> ParseCountries(List<string> countryFileLines)
+        {
             //Validate countries and instance countries
             List<Country> countries = new List<Country>();
             var lineCount = 0;
@@ -55,7 +53,7 @@ namespace Iron.Solid.SRP.Refactor
 
                 var fields = line.Split("-");
 
-                if(fields.Length != 3)
+                if (fields.Length != 3)
                 {
                     Console.WriteLine($"WARN: Line { lineCount } Invalid. Only { fields.Length } fields found.");
                     continue;
@@ -98,12 +96,30 @@ namespace Iron.Solid.SRP.Refactor
 
             }
 
-            //Insert countries in BD
-            using (var context = new ApplicationDbContext())
+            return countries;
+        }
+
+        private List<string> ReadCountryData()
+        {
+            List<string> countryFileLines = new List<string>();
+
+            using (StreamReader reader = new StreamReader(countryFilePath))
             {
-                countries.ForEach(country => context.Add(country));
-                context.SaveChanges();
-            };
+                try
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        countryFileLines.Add(line);
+                    }
+                }
+                catch (FileNotFoundException ex)
+                {
+                    Console.WriteLine($"ERROR: File { countryFilePath } Not Found - { ex.Message }");
+                }
+            }
+
+            return countryFileLines;
         }
 
         public List<Country> GetCountries()
