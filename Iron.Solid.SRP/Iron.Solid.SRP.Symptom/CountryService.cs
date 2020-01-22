@@ -62,21 +62,21 @@ namespace Iron.Solid.SRP.Symptom
                 }
 
                 string countryName = fields[0];
-                if (string.IsNullOrEmpty(countryName))
+                if (string.IsNullOrWhiteSpace(countryName))
                 {
                     Console.WriteLine($"WARN: Line { lineCount } - Invalid Country Name.");
                     continue;
                 }
 
                 string countryLanguage = fields[1];
-                if (string.IsNullOrEmpty(countryLanguage))
+                if (string.IsNullOrWhiteSpace(countryLanguage))
                 {
                     Console.WriteLine($"WARN: Line { lineCount } - Invalid Country Language.");
                     continue;
                 }
 
                 string countryContinent = fields[2];
-                if (string.IsNullOrEmpty(countryContinent))
+                if (string.IsNullOrWhiteSpace(countryContinent))
                 {
                     Console.WriteLine($"WARN: Line { lineCount } - Invalid Country Continent.");
                     continue;

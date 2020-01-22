@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Iron.Solid.SRP.Refactor.ExternalDataProvider;
+using Iron.Solid.SRP.Refactor.Logger;
+using Iron.Solid.SRP.Refactor.Parser;
+using Iron.Solid.SRP.Refactor.Repository;
+using System;
 using System.Collections.Generic;
 
 namespace Iron.Solid.SRP.Refactor
@@ -7,7 +11,14 @@ namespace Iron.Solid.SRP.Refactor
     {
         static void Main(string[] args)
         {
-            var countryService = new CountryService();
+            var logger = new CountryLogger();
+            var countryService = new CountryService(
+                logger,
+                new TextFileCountryDataProvider(logger,@"C:\Users\franc\Documents\Desarrollo\GitRepo\IronSolidPrinciples\Iron.Solid.SRP\FileStorage\Countries.txt"),
+                new CountryParser(logger),
+                new CountryRepository()
+            );
+
             countryService.ProcessCountries();
 
             Console.WriteLine("------ Results ------");
